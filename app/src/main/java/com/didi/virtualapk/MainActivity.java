@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
             cpuArch = Build.SUPPORTED_ABIS[0];
         } else {
             cpuArch = Build.CPU_ABI;
+
         }
         textView.setText(cpuArch);
         Log.d("ryg", "onCreate cpu arch is "+ cpuArch);
