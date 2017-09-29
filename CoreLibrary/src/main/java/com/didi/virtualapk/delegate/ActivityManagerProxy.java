@@ -42,6 +42,10 @@ import java.lang.reflect.Proxy;
 /**
  * @author johnsonlee
  */
+
+/***
+ * 这个 ActivityManagerProxy 主要是动态代理 service的操作，包括 start bind unbind stopService stopServiceToken操作
+ */
 public class ActivityManagerProxy implements InvocationHandler {
 
     private static final String TAG = "IActivityManagerProxy";
@@ -63,6 +67,7 @@ public class ActivityManagerProxy implements InvocationHandler {
         this.mActivityManager = activityManager;
     }
 
+    // 动态代理，根据传入的方法名称，去处理对应的方式
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if ("startService".equals(method.getName())) {
@@ -200,13 +205,16 @@ public class ActivityManagerProxy implements InvocationHandler {
         return true;
     }
 
+    // 启动代理service来处理target
     private ComponentName startDelegateServiceForTarget(Intent target, ServiceInfo serviceInfo, Bundle extras, int command) {
         Intent wrapperIntent = wrapperTargetIntent(target, serviceInfo, extras, command);
         return mPluginManager.getHostContext().startService(wrapperIntent);
     }
 
+    // 使用一个intent，去包装target版的intent， 将启动过程交给localservice
     private Intent wrapperTargetIntent(Intent target, ServiceInfo serviceInfo, Bundle extras, int command) {
         // fill in service with ComponentName
+        //将componentName设置给要启动的intent
         target.setComponent(new ComponentName(serviceInfo.packageName, serviceInfo.name));
         String pluginLocation = mPluginManager.getLoadedPlugin(target.getComponent()).getLocation();
 
@@ -215,6 +223,7 @@ public class ActivityManagerProxy implements InvocationHandler {
         Class<? extends Service> delegate = local ? LocalService.class : RemoteService.class;
         Intent intent = new Intent();
         intent.setClass(mPluginManager.getHostContext(), delegate);
+        //将intent只是作为一个parcelable对象传递给localserivice，所有的启动逻辑在localService里面启动
         intent.putExtra(RemoteService.EXTRA_TARGET, target);
         intent.putExtra(RemoteService.EXTRA_COMMAND, command);
         intent.putExtra(RemoteService.EXTRA_PLUGIN_LOCATION, pluginLocation);

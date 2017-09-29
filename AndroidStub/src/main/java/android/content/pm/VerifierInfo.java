@@ -8,6 +8,7 @@ import java.security.PublicKey;
 /**
  * @author johnsonlee
  */
+//用来验证的类
 public class VerifierInfo implements Parcelable{
 
     public static final Parcelable.Creator<VerifierInfo> CREATOR = new Parcelable.Creator<VerifierInfo>() {

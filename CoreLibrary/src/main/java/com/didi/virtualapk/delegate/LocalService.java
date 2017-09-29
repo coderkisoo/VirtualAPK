@@ -85,6 +85,7 @@ public class LocalService extends Service {
         LoadedPlugin plugin = mPluginManager.getLoadedPlugin(component);
 
         switch (command) {
+            // service 启动
             case EXTRA_COMMAND_START_SERVICE: {
                 ActivityThread mainThread = (ActivityThread)ReflectUtil.getActivityThread(getBaseContext());
                 IApplicationThread appThread = mainThread.getApplicationThread();
@@ -112,6 +113,7 @@ public class LocalService extends Service {
                 service.onStartCommand(target, 0, this.mPluginManager.getComponentsHandler().getServiceCounter(service).getAndIncrement());
                 break;
             }
+            // service binde
             case EXTRA_COMMAND_BIND_SERVICE: {
                 ActivityThread mainThread = (ActivityThread)ReflectUtil.getActivityThread(getBaseContext());
                 IApplicationThread appThread = mainThread.getApplicationThread();
@@ -151,6 +153,7 @@ public class LocalService extends Service {
                 }
                 break;
             }
+            //service 停止
             case EXTRA_COMMAND_STOP_SERVICE: {
                 Service service = this.mPluginManager.getComponentsHandler().forgetService(component);
                 if (null != service) {
@@ -164,6 +167,7 @@ public class LocalService extends Service {
                 }
                 break;
             }
+            //service unbind
             case EXTRA_COMMAND_UNBIND_SERVICE: {
                 Service service = this.mPluginManager.getComponentsHandler().forgetService(component);
                 if (null != service) {
